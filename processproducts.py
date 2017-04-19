@@ -10,7 +10,8 @@ from datetime import datetime
 
 class processproducts:
     logger = logging.getLogger("processproducts")
-    logger.addHandler(RotatingFileHandler("producessproducts.log",'a',100000,2))
+    '''10MB log file'''
+    logger.addHandler(RotatingFileHandler("producessproducts.log",'a',10000000,2))
     logger.setLevel(logging.INFO)
     dfassort = pd.DataFrame()
     xmldoc = []
