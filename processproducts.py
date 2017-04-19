@@ -132,6 +132,6 @@ class processproducts:
 
 
 
-
-prod = processproducts()
-prod.process()
+if __name__ == "__main__":
+    prod = processproducts()
+    prod.process()
