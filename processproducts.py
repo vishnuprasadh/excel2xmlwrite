@@ -41,21 +41,24 @@ class processproducts:
     _SPECIALITY ="speciality"
 
     def __init__(self):
-        self.dfassort = pd.read_csv(os.path.join(os.path.dirname(__file__),"assortment.csv"))
+        self.dfassort = pd.read_csv(os.path.join(os.path.dirname(__file__),"assortment.csv"),encoding='latin-1')
 
 
     def process(self):
         try:
-            item = self._createroot('item')
 
-            index = 1
+            intcount = 1
             for index,row in self.dfassort.iterrows():
                 try:
-                    description = str(row[self._DESCRIPTION]).strip().encode()
+                    item = self._createroot('item')
+
+                    description = str(row[self._DESCRIPTION]).strip()
+
                     cluster = self._startelement("cluster",item)
                     self._startelement("clusterid",cluster, str(row[self._CLUSTER]))
+
                     product = self._startelement("product",item)
-                    self._startelement("code",product, "G{}".format(row[self._ARTICLECODE]))
+                    self._startelement("code",product, str(row[self._ARTICLECODE]))
                     self._startelement("articleNumber",product,str(row[self._ARTICLECODE]))
                     self._startelement("name",product,description)
                     self._startelement("shortdesc",product,description)
@@ -94,14 +97,15 @@ class processproducts:
                     self._startelement("brandtypelabel", brand, brandname)
                     self._startelement("enrichedbrandname", brand,description)
                     self._startelement("brandcode", brand,"B_{}".format(brandname,row[self._ARTICLECODE]))
+                    root = xtree.ElementTree(item)
+                    root.write("{}.xml".format(str(row[self._ARTICLECODE])))
                 except Exception as ex:
                     self.logger.error("Failed to process for row {} - exception - {}".format(index,ex))
                 finally:
-                    index = index + 1
+                    intcount = intcount + 1
                     self.logger.info("Processed row {} successfully.".format(index))
+                    #if intcount > 2: break
 
-            root = xtree.ElementTree(item)
-            root.write("output.xml")
         except Exception as ex:
             self.logger.error("Failed write or creation of root node due to - {}".format( ex))
         finally:
